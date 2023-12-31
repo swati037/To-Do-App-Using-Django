@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .header {
+            text-align: left;
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            color: #000;
+        }
+        .header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+        h1 {
+            margin-top: 50px;
+            font-size: 36px;
+            color: #333;
+        }
+        .todo-list {
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 5px;
+            width: 400px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+        }
+        li {
+            margin: 10px 0;
+            padding: 20px;
+            background-color: #fdfdfd; 
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-details {
+            flex: 1;
+            /* overflow: hidden; */
+            /* white-space: nowrap; */
+            /* text-overflow: ellipsis;  */
+        }
+        .edit-delete {
+            display: flex;
+            align-items: center;
+        }
+
+        .edit-button, .delete-button {
+            color: #333; 
+            margin-left: 10px;
+        }
+
+        
+        .edit-delete a {
+            margin-left: 10px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        li a {
+            color: #007BFF;
+            text-decoration: none;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+       
+        .create-task-button {
+            display: block;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .create-task-button:hover {
+            background-color: #555;
+        }
+        .edit-button {
+            color: #28a745; 
+        }
+        .delete-button {
+            color: #dc3545; 
+        }
+
+        
+        #search-container {
+            margin-bottom: 30px; 
+        }
+
+        #task-search {
+            padding: 8px; 
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #333;
+            margin-right: 10px; 
+        }
+
+        #task-search:focus {
+            outline: none; 
+            border-color: #555; 
+        }
+
+        #search-button {
+            padding: 8px 15px; 
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #search-button:hover {
+            background-color: #555;
+        }
+
+        .logout-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 15px;
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none; 
+        }
+
+        .logout-button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>Hi, {{ username }}</h2>
+    </div>
+    <h1>To-Do List</h1>
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="logout-button">Logout</button>
+    </form>
+    
+    <div class="todo-list">
+        <input type="text" id="task-search" placeholder="Search tasks">
+        <button id="search-button" onclick="searchTasks()">Search</button>
+
+        <ul>
+            {% for task in tasks %}
+                <li>
+                    <div class="task-details">
+                        {{ task.title }}
+                    </div>
+                    <div class="edit-delete">
+                        <a href="{% url 'update_task' task.pk %}" class="edit-button">Edit</a>
+                        <a href="{% url 'delete_task' task.pk %}" class="delete-button">Delete</a>
+                    </div>
+                </li>
+            {% empty %}
+                <p>No tasks yet.</p>
+            {% endfor %}
+        </ul>
+        
+
+        <a href="{% url 'create_task' %}" class="create-task-button">Create Task</a>
+    </div>
+
+   
+    <script>
+        function searchTasks() {
+            
+            var searchInput = document.getElementById('task-search').value.toLowerCase();
+            var taskItems = document.querySelectorAll('ul li');
+
+            taskItems.forEach(function (taskItem) {
+                var taskTitle = taskItem.textContent.toLowerCase();
+                if (taskTitle.includes(searchInput)) {
+                    taskItem.style.display = 'flex'; 
+                } else {
+                    taskItem.style.display = 'none'; 
+                }
+            });
+        }
+    </script>
+</body>
+</html>
